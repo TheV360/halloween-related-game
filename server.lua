@@ -38,8 +38,8 @@ function server.update(dt)
 	local dy = 0
 	
 	for id, home in pairs(server.homes) do
-		dx = dx + (home.move.x or 0)
-		dy = dy + (home.move.y or 0)
+		dx = dx + ((home and home.move and home.move.x) or 0)
+		dy = dy + ((home and home.move and home.move.y) or 0)
 	end
 	
 	share.boxPos.x = share.boxPos.x + dx * dt
