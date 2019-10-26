@@ -18,10 +18,12 @@ local homes = server.homes
 
 function server.connect(id) -- Called on connect from client with `id`
 	print("hello, " .. id .. "!")
+	share.players[id] = newPlayer(id)
 end
 
 function server.disconnect(id) -- Called on disconnect from client with `id`
 	print("goodbye, " .. id .. "!")
+	share.players[id] = nil
 end
 
 function server.receive(id, ...) -- Called when client with `id` does `client.send(...)`
@@ -30,18 +32,34 @@ end
 -- Main loop
 
 function server.load()
-	share.boxPos = Util.Point()
+	-- share.boxPos = Util.Point()
+	
+	share.players = {}
 end
 
 function server.update(dt)
-	local dx = 0
-	local dy = 0
-	
-	for id, home in pairs(server.homes) do
-		dx = dx + ((home and home.move and home.move.x) or 0)
-		dy = dy + ((home and home.move and home.move.y) or 0)
+	for _, player in pairs(share.players) do
+		local id = player.id
+		
+		if not player.me then
+			player.me = homes[id].me
+		end
+		
+		if homes[id].ready then
+			player.x = player.x + homes[id].move.x * PLAYER_SPEED * dt
+			player.y = player.y + homes[id].move.y * PLAYER_SPEED * dt
+		end
 	end
+end
+
+-- Server Functions
+
+function newPlayer(id)
+	local p = {id = id}
+	p.photo = false
 	
-	share.boxPos.x = share.boxPos.x + dx * 15 * dt
-	share.boxPos.y = share.boxPos.y + dy * 15 * dt
+	p.x = 0
+	p.y = 0
+	
+	return p
 end

@@ -17,8 +17,9 @@ local home = client.home
 -- Events
 
 function client.connect() -- Called on connect from server
-	print("hi, i'm a client")
+	home.me = castle.user.getMe()
 	home.move = Util.Point()
+	home.ready = true
 end
 
 function client.disconnect() -- Called on disconnect from server
@@ -64,9 +65,9 @@ function client.load()
 end
 
 function client.update(dt)
+	seconds = seconds + dt
+	
 	if client.connected then
-		seconds = seconds + dt
-		
 		buttons:update()
 		
 		home.move.x = 0
@@ -75,6 +76,7 @@ function client.update(dt)
 		if buttons.down.down  then home.move.y =  1 end
 		if buttons.down.left  then home.move.x = -1 end
 		if buttons.down.right then home.move.x =  1 end
+		Util.PointNormalize(home.move)
 	end
 end
 
@@ -82,11 +84,39 @@ function client.draw()
 	love.graphics.clear()
 	
 	if client.connected then
-		love.graphics.setColor(0.25, 0.5, 1)
-		love.graphics.rectangle("fill",  share.boxPos.x - 4, share.boxPos.y - 4, 8, 8)
-		
 		love.graphics.setColor(1, 1, 1)
+		for _, player in pairs(share.players) do
+			drawPlayer(player, player.id == client.id)
+		end
 	else
-		love.graphics.print("oh no")
+		if seconds > 5 then
+			love.graphics.print("Uh... something broke.", 0, 0)
+			love.graphics.print("Maybe close the game and reopen?", 0, 8)
+		else
+			local msg = "connecting..."
+			
+			for i = 1, #msg do
+				love.graphics.print(string.sub(msg, i, i), (128 - #msg*4) + (i * 8), 96 + Util.sine(seconds + (i / #msg), 5, 32))
+			end
+		end
+	end
+end
+
+-- Util
+
+function drawPlayer(player, isClient)
+	if player.me then
+		if not player.photo then
+			player.photo = true
+			network.async(function()
+				player.photo = love.graphics.newImage(player.me.photoUrl)
+			end)
+		end
+	end
+	
+	if player.photo and player.photo ~= true then
+		love.graphics.draw(player.photo, player.x - (PLAYER_SIZE / 2), player.y - (PLAYER_SIZE / 2), 0, PLAYER_SIZE / player.photo:getWidth(), PLAYER_SIZE / player.photo:getWidth())
+	else
+		love.graphics.rectangle("fill", player.x - (PLAYER_SIZE / 2), player.y - (PLAYER_SIZE / 2), PLAYER_SIZE, PLAYER_SIZE)
 	end
 end

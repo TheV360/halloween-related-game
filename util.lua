@@ -123,6 +123,16 @@ end
 function Util.Point(x, y)
 	return {x = x or 0, y = y or 0}
 end
+function Util.PointLength(p)
+	return math.sqrt(p.x * p.x + p.y * p.y)
+end
+function Util.PointNormalize(p)
+	local l = Util.PointLength(p)
+	if l ~= 0 and l ~= 1 then
+		p.x = p.x / l
+		p.y = p.y / l
+	end
+end
 
 function Util.Size(width, height)
 	return {width = width or 1, height = height or width or 1}
