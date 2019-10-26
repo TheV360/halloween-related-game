@@ -1,0 +1,8 @@
+main: main_local.lua
+title: A Halloween-related Game
+owner: v360
+
+dimensions: 256x192
+scaling: step
+
+unlisted: true
