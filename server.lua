@@ -42,6 +42,6 @@ function server.update(dt)
 		dy = dy + ((home and home.move and home.move.y) or 0)
 	end
 	
-	share.boxPos.x = share.boxPos.x + dx * dt
-	share.boxPos.y = share.boxPos.y + dy * dt
+	share.boxPos.x = share.boxPos.x + dx * 15 * dt
+	share.boxPos.y = share.boxPos.y + dy * 15 * dt
 end
