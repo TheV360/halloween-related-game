@@ -37,7 +37,7 @@ function server.update(dt)
 	local dx = 0
 	local dy = 0
 	
-	for id, home in pairs(homes) do
+	for id, home in pairs(server.homes) do
 		dx = dx + home.move.x
 		dy = dy + home.move.y
 	end
