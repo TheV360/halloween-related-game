@@ -17,6 +17,7 @@ local home = client.home
 -- Events
 
 function client.connect() -- Called on connect from server
+	print("hi, i'm a client")
 	home.move = Util.Point()
 end
 
