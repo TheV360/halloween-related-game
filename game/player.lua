@@ -44,6 +44,7 @@ function Player.draw(p, isClient)
 	end
 	love.graphics.draw(Player.Image, 0, 0, 0, 1, 1, Player.ImageSize.width / 2, Player.ImageSize.height)
 	
+	love.graphics.setColor(1, 1, 1)
 	if p.photo and p.photo ~= true then
 		love.graphics.draw(p.photo, -Player.FaceSize/2, 2 - Player.ImageSize.height, 0, Player.FaceSize / p.photo:getWidth(), Player.FaceSize / p.photo:getWidth())
 	end
@@ -61,12 +62,23 @@ end
 -- Data
 
 function Player.clientSetUpData(p, home)
-	home.pos = Util.point()
+	home.pos = Util.Point(p.pos.x, p.pos.y)
 end
 
 function Player.clientUpdateData(p, home)
-	home.pos.x = p.x
-	home.pos.y = p.y
+	home.pos.x = p.pos.x
+	home.pos.y = p.pos.y
+end
+
+function Player.serverUpdateData(p, home)
+	if not p.me then
+		p.me = home.me
+	end
+	
+	if home.pos then
+		p.pos.x = home.pos.x
+		p.pos.y = home.pos.y
+	end
 end
 
 return Player

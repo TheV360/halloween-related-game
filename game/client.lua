@@ -18,6 +18,7 @@ local home = client.home
 
 function client.connect() -- Called on connect from server
 	clientPlayer.id = client.id
+	Player.clientSetUpData(clientPlayer, client.home)
 	
 	home.pos = Util.Point(clientPlayer.pos.x, clientPlayer.pos.y)
 end
@@ -58,6 +59,7 @@ function client.load()
 	-- Other stuff
 	clientPlayer = Player.new(nil)
 	clientPlayer.me = castle.user.getMe()
+	
 	moveDir = Util.Point()
 end
 
@@ -78,7 +80,7 @@ function client.update(dt)
 	Player.move(clientPlayer, moveDir, running, dt)
 	
 	if client.connected then
-		Player.clientUpdateData(clientPlayer, home)
+		Player.clientUpdateData(clientPlayer, client.home)
 	end
 end
 
@@ -90,16 +92,12 @@ function client.draw()
 	
 	if client.connected then
 		for _, player in pairs(share.players) do
-			love.graphics.setColor(1, 1, 1)
-			if player.id == client.id then -- this is you. draw you.
-				Player.draw(clientPlayer, true)
-			else
+			if player.id ~= client.id then
 				Player.draw(player, false)
 			end
 		end
-	else
-		Player.draw(clientPlayer, true)
 	end
+	Player.draw(clientPlayer, true)
 	
 	love.graphics.pop()
 	

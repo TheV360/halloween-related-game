@@ -36,15 +36,8 @@ function server.load()
 end
 
 function server.update(dt)
-	for id, player in pairs(share.players) do
-		if not player.me then
-			player.me = homes[id].me
-		end
-		
-		if homes[id].ready then
-			player.x = homes[id].pos.x
-			player.y = homes[id].pos.y
-		end
+	for id, p in pairs(share.players) do
+		Player.serverUpdateData(p, homes[id])
 	end
 end
 
