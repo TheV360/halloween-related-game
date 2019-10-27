@@ -1,4 +1,4 @@
-main: main_castle.lua
+main: main_local.lua
 title: A Halloween-related Game
 owner: v360
 

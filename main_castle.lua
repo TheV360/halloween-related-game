@@ -1,4 +1,4 @@
 -- G l o b a l  game
 USE_CASTLE_CONFIG = true
-require "server"
-require "client"
+require "game/server"
+require "game/client"

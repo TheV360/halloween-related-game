@@ -1,0 +1,26 @@
+[
+	{
+		"name": "TV",
+		"description": "A big TV! You can watch plenty of shows on it. The thing is... aren't you also a TV?",
+		"graphic": [{
+			"width": 32
+		}]
+	},
+	{
+		"name": "Flower",
+		"description": "A pretty flower! It's made of plastic, but you appreciate it all the same.",
+		"graphic": [{
+			"u": 32,
+			"width": 16
+		}]
+	},
+	{
+		"name": "Cube",
+		"description": "A small blue cube! It's not perspective-correct, but that's okay.",
+		"graphic": [{
+			"u": 48, "v": 20,
+			"width": 16,
+			"height": 12
+		}]
+	}
+]
