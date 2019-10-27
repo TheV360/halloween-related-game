@@ -54,11 +54,14 @@ function client.load()
 		menu  = "return"
 	}
 	
+	Camera = require("game/camera")
+	
 	Player.loadResources()
 	
 	-- Other stuff
 	clientPlayer = Player.new(nil)
 	clientPlayer.me = castle.user.getMe()
+	camera = Camera.new(clientPlayer)
 	
 	moveDir = Util.Point()
 end
@@ -79,6 +82,8 @@ function client.update(dt)
 	local running = buttons.down.run
 	Player.move(clientPlayer, moveDir, running, dt)
 	
+	Camera.update(camera)
+	
 	if client.connected then
 		Player.clientUpdateData(clientPlayer, client.home)
 	end
@@ -88,7 +93,7 @@ function client.draw()
 	love.graphics.clear()
 	
 	love.graphics.push()
-	-- love.graphics.translate(-clientPlayer.pos.x, -clientPlayer.pos.y)
+	love.graphics.translate(SCREEN_WIDTH/2 - camera.pos.x, SCREEN_HEIGHT/2 - camera.pos.y)
 	
 	if client.connected then
 		for _, player in pairs(share.players) do
@@ -98,6 +103,8 @@ function client.draw()
 		end
 	end
 	Player.draw(clientPlayer, true)
+	love.graphics.print(clientPlayer.pos.x, 0, 0)
+	love.graphics.print(clientPlayer.pos.y, 0, 8)
 	
 	love.graphics.pop()
 	

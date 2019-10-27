@@ -55,8 +55,16 @@ end
 function Player.move(p, moveDir, running, dt)
 	Util.PointNormalize(moveDir)
 	
-	p.pos.x = p.pos.x + moveDir.x * (running and Player.SpeedRun or Player.Speed) * dt
-	p.pos.y = p.pos.y + moveDir.y * (running and Player.SpeedRun or Player.Speed) * dt
+	if moveDir.x ~= 0 then
+		p.pos.x = p.pos.x + moveDir.x * (running and Player.SpeedRun or Player.Speed) * dt
+	else
+		p.pos.x = Util.round(p.pos.x)
+	end
+	if moveDir.y ~= 0 then
+		p.pos.y = p.pos.y + moveDir.y * (running and Player.SpeedRun or Player.Speed) * dt
+	else
+		p.pos.y = Util.round(p.pos.y)
+	end
 end
 
 -- Data
