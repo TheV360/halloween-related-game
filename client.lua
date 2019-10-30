@@ -1,4 +1,4 @@
-require "game/common"
+require "common"
 
 --- CLIENT
 
@@ -55,13 +55,17 @@ function client.load()
 	}
 	
 	Camera = require("game/camera")
+	denver = require("lib/denver")
 	
 	Player.loadResources()
 	
 	-- Other stuff
-	clientPlayer = Player.new(nil)
+	clientPlayer = Player(nil)
 	clientPlayer.me = castle.user.getMe()
-	camera = Camera.new(clientPlayer)
+	camera = Camera(clientPlayer)
+	
+	pianoSound = denver.get{waveform = "triangle"}
+	pianoSound:setLooping(true)
 	
 	moveDir = Util.Point()
 end
@@ -77,15 +81,22 @@ function client.update(dt)
 	if buttons.down.down  then moveDir.y =  1 end
 	if buttons.down.left  then moveDir.x = -1 end
 	if buttons.down.right then moveDir.x =  1 end
-	Util.PointNormalize(moveDir)
 	
 	local running = buttons.down.run
-	Player.move(clientPlayer, moveDir, running, dt)
+	clientPlayer:move(moveDir, running, dt)
 	
-	Camera.update(camera)
+	camera:update()
+	
+	if buttons.down.poke then pianoSound:setPitch((clientPlayer.pos.x + 32) / 64) end
+	if buttons.press.poke then
+		pianoSound:play()
+	end
+	if buttons.release.poke then
+		pianoSound:stop()
+	end
 	
 	if client.connected then
-		Player.clientUpdateData(clientPlayer, client.home)
+		clientPlayer.clientUpdateData(client.home)
 	end
 end
 
@@ -98,11 +109,18 @@ function client.draw()
 	if client.connected then
 		for _, player in pairs(share.players) do
 			if player.id ~= client.id then
-				Player.draw(player, false)
+				player:draw(false)
 			end
 		end
+		
+		-- table.sort(YSort,)
+		
+		-- for i = 1, #YSort do
+		-- end
 	end
-	Player.draw(clientPlayer, true)
+	
+	clientPlayer:draw(true)
+	
 	love.graphics.print(clientPlayer.pos.x, 0, 0)
 	love.graphics.print(clientPlayer.pos.y, 0, 8)
 	

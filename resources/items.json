@@ -22,5 +22,13 @@
 			"width": 16,
 			"height": 12
 		}]
+	},
+	{
+		"name": "Piano",
+		"description": "A piano! You don't have any sheet music for it... Improvise?",
+		"graphic": [{
+			"u": 64,
+			"width": 32
+		}]
 	}
 ]

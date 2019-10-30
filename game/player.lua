@@ -1,38 +1,34 @@
-local Player = {}
+local Player = Object:extend()
+
+Player.loadResources = function()
+	Player.Image = love.graphics.newImage("resources/player.png")
+	Player.ImageSize = Util.Size(Player.Image:getDimensions())
+end
 
 Player.FaceSize = 12
 Player.Speed = 64
 Player.SpeedRun = 96
 
-function Player.loadResources()
-	Player.Image = love.graphics.newImage("resources/player.png")
-	Player.ImageSize = Util.Size(Player.Image:getDimensions())
-end
-
-function Player.new(id)
-	local p = {}
+function Player:new(id)
+	self.id = id or false
 	
-	p.id = id or false
+	self.me = false
+	self.photo = false
 	
-	p.me = false
-	p.photo = false
-	
-	p.pos = Util.Point()
-	
-	return p
+	self.pos = Util.Point()
 end
 
 -- Main Loop
 
-function Player.draw(p, isClient)
+function Player:draw(isClient)
 	love.graphics.push()
-	love.graphics.translate(p.pos.x, p.pos.y)
+	love.graphics.translate(self.pos.x, self.pos.y)
 	
-	if p.me then
-		if not p.photo then
-			p.photo = true
+	if self.me then
+		if not self.photo then
+			self.photo = true
 			network.async(function()
-				p.photo = love.graphics.newImage(p.me.photoUrl)
+				self.photo = love.graphics.newImage(self.me.photoUrl)
 			end)
 		end
 	end
@@ -45,47 +41,50 @@ function Player.draw(p, isClient)
 	love.graphics.draw(Player.Image, 0, 0, 0, 1, 1, Player.ImageSize.width / 2, Player.ImageSize.height)
 	
 	love.graphics.setColor(1, 1, 1)
-	if p.photo and p.photo ~= true then
-		love.graphics.draw(p.photo, -Player.FaceSize/2, 2 - Player.ImageSize.height, 0, Player.FaceSize / p.photo:getWidth(), Player.FaceSize / p.photo:getWidth())
+	if self.photo and self.photo ~= true then
+		love.graphics.draw(self.photo, -Player.FaceSize/2, 2 - Player.ImageSize.height, 0, Player.FaceSize / self.photo:getWidth(), Player.FaceSize / self.photo:getWidth())
 	end
 	
 	love.graphics.pop()
 end
 
-function Player.move(p, moveDir, running, dt)
+function Player:move(moveDir, running, dt)
 	Util.PointNormalize(moveDir)
 	
 	if moveDir.x ~= 0 then
-		p.pos.x = p.pos.x + moveDir.x * (running and Player.SpeedRun or Player.Speed) * dt
+		self.pos.x = self.pos.x + moveDir.x * (running and Player.SpeedRun or Player.Speed) * dt
 	else
-		p.pos.x = Util.round(p.pos.x)
+		self.pos.x = Util.round(self.pos.x)
 	end
 	if moveDir.y ~= 0 then
-		p.pos.y = p.pos.y + moveDir.y * (running and Player.SpeedRun or Player.Speed) * dt
+		self.pos.y = self.pos.y + moveDir.y * (running and Player.SpeedRun or Player.Speed) * dt
 	else
-		p.pos.y = Util.round(p.pos.y)
+		self.pos.y = Util.round(self.pos.y)
 	end
+	
+	love.audio.setPosition(self.pos.x / UNIT_SIZE, self.pos.y / UNIT_SIZE, 0)
+	love.audio.setVelocity(moveDir.x / UNIT_SIZE, moveDir.y / UNIT_SIZE, 0)
 end
 
 -- Data
 
-function Player.clientSetUpData(p, home)
-	home.pos = Util.Point(p.pos.x, p.pos.y)
+function Player:clientSetUpData(home)
+	home.pos = Util.Point(self.pos.x, self.pos.y)
 end
 
-function Player.clientUpdateData(p, home)
-	home.pos.x = p.pos.x
-	home.pos.y = p.pos.y
+function Player:clientUpdateData(home)
+	home.pos.x = self.pos.x
+	home.pos.y = self.pos.y
 end
 
-function Player.serverUpdateData(p, home)
-	if not p.me then
-		p.me = home.me
+function Player:serverUpdateData(home)
+	if not self.me then
+		self.me = home.me
 	end
 	
 	if home.pos then
-		p.pos.x = home.pos.x
-		p.pos.y = home.pos.y
+		self.pos.x = home.pos.x
+		self.pos.y = home.pos.y
 	end
 end
 

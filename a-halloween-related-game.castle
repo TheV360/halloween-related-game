@@ -1,8 +1,14 @@
-main: main_castle.lua
+main: client.lua
 title: A Halloween-related Game
 owner: v360
 
+coverImage: resources/cover.png
+
 dimensions: 256x192
 scaling: step
+
+multiplayer:
+	enabled: true
+	serverMain: server.lua
 
 unlisted: true

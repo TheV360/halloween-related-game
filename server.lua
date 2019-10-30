@@ -1,4 +1,4 @@
-require "game/common"
+require "common"
 
 --- SERVER
 
@@ -18,7 +18,7 @@ local homes = server.homes
 
 function server.connect(id) -- Called on connect from client with `id`
 	print("hello, " .. id .. "!")
-	share.players[id] = Player.new(id)
+	share.players[id] = Player(id)
 end
 
 function server.disconnect(id) -- Called on disconnect from client with `id`
@@ -37,7 +37,7 @@ end
 
 function server.update(dt)
 	for id, p in pairs(share.players) do
-		Player.serverUpdateData(p, homes[id])
+		p:serverUpdateData(homes[id])
 	end
 end
 
